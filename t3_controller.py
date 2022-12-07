@@ -5,7 +5,7 @@ T3_controller
 from utilities import dict_rev
 
 from gis.engine import game_engine
-from gis.inscription_maker import drawing_inscriptions, drawing_board
+from gis.inscription_maker import drawing_inscriptions, drawing_board, show_set_settings
 from gis.view_ext import init_view, user_interaction, set_parameter, welcome_game
 import gis.view_ext as v
 from t3_calculate import is_winnings
@@ -29,8 +29,7 @@ def init_game(size_new, numb_XO_new, player_attr):
 # Задание (настройка) параметров игры
 def setting_game(my_attr, area=None):
 
-    user_interaction('Можете изменить параметры игры. ["-"] - отмена; '
-                     '[Enter] - не менять:', -1, active=False)
+    show_set_settings()
 
     my_cod, my_sign = my_attr
     pos_X = v.pos_question[0]

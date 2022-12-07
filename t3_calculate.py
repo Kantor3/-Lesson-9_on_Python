@@ -6,6 +6,7 @@ import copy
 from functools import reduce
 import t3_models as m
 from gis.inscription_maker import drawing_board
+from utilities import trans_ll
 
 
 # Выигравший символ (код), было: cod_win = get_cod(stat, str_cod(numb))
@@ -13,14 +14,6 @@ def get_cod(st, number):
     s_cod = str(list(m.SIGNS.keys())[number]) * m.numb_XO
     to_line = lambda el: ''.join(map(str, el))
     return [(i, to_line(st[i]).find(s_cod) ) for i, el in enumerate(st) if s_cod in to_line(el)]
-
-
-# транспонирование вложенного списка
-def trans(stt):
-    stt_flat = [ell for i in range(len(stt)) for el in stt for ell in [el[i]]]
-    ret = [reduce(lambda ell, el: ell + [el],
-                  stt_flat[i * m.SIZE_BOARD:][:m.SIZE_BOARD], []) for i in range(m.SIZE_BOARD)]
-    return ret
 
 
 # выделение элементов, находящихся на диагоналях вложенного списка
@@ -72,7 +65,7 @@ def marking_line(st, cod_win, T):
     rw, cl = cod_win
     mark_line = lambda ell, frm: [-el if frm + m.numb_XO > i > frm - 1 else el for i, el in enumerate(ell)]
     marked_st = [mark_line(el, cl) if i == rw else el for i, el in enumerate(st)]
-    return trans(marked_st) if T == 2 else marked_st
+    return trans_ll(marked_st) if T == 2 else marked_st
 
 
 # Проверить игру на завершение (выигрыш одного из игроков или ничья)
@@ -82,13 +75,14 @@ def marking_line(st, cod_win, T):
 # - None - если игра не завершена
 # - 0 - если ничья
 # - № игрока, который выиграл, если на доске есть выигрыш
-# TODO: В рамках развития визуализации добавить выделение
-#  выигрышной линии тем или иным способом (фоном, например синий на белом)
-#  или (цвет символа игровой на белом) и т.д., какой будет наиболее различим
 def is_winnings(board_st):
 
-    for board, numb, _ in multi_for( ( 1, 2 ), (1, 2), (None, None)):
-        stat = (board_st, trans(board_st))[board-1]
+    cycle = 1, 2
+
+    # Проверяем наличие выигрышных фрагментов на горизонталях и вертикалях
+    # for board, numb, _ in multi_for((1, 2), (1, 2), (None, None)):
+    for board, numb, _ in multi_for(cycle, cycle, (None, None)):
+        stat = (board_st, trans_ll(board_st))[board-1]
         cod_win = get_cod(stat, numb)
         if cod_win:
             board_st_mark = marking_line(stat, cod_win[0], board)
@@ -96,12 +90,12 @@ def is_winnings(board_st):
     else:
         # Проверяем наличие выигрышного фрагмента на диагоналях
         drawing_board(board_st)
-        for board, slash, numb in multi_for((1, 2), (1, 2), (1, 2)):
+        for board, slash, numb in multi_for(cycle, cycle, cycle):
             stat = diagonals(board_st, board, slash)
             cod_win = get_cod(stat, numb)
             if cod_win:
                 board_st_mark = marking_diagonal(board_st, cod_win[0],  board, slash)
-                return 1, board_st_mark  # Выигрыш текущего игрока
+                return 1, board_st_mark         # Выигрыш текущего игрока
         else:
             # Проверяем наличие на доске ничьи
             if not list(filter(lambda el: not el, [ell for el in board_st for ell in el])):

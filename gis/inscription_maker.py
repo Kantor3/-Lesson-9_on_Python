@@ -8,7 +8,7 @@ Inscription_maker.
 from gis import color_board, color_round, bolt, normal, color_acc_draw, \
                 color_account, under, color_acc_total, color_comment, \
                 italics, color_norm, color_set, color_mark, color_reset
-from gis.view_ext import screen_preparation
+from gis.view_ext import screen_preparation, user_interaction
 from gis.view_ext import CELL_x, CELL_y, pynput_print, X0, Y0
 import gis.view_ext as v
 from t3_models import get_players_attr, set_nav
@@ -105,6 +105,12 @@ def show_settings(n_round, my_attr):
                  f'{color_account}Ваш игровой символ - {color_set}"{m.SIGNS[my_sign]}"{normal}',
                  sep='\n', goto=goto
                  )
+
+
+# Оформление зоны при установке игровых параметров
+def show_set_settings():
+    user_interaction('Можете изменить параметры игры. '
+                     '[Enter] - последнее значение; ["-"] - отмена:', -1, active=False)
 
 
 # Вывод комментариев (краткая инструкция к игре)
