@@ -198,6 +198,13 @@ def get_empty(type_val):
     return types[type_val]
 
 
+# Реверсирование знака - возвращает реверсирование значение и меняет это значение в источнике
+def reversal(val_name):
+    while True:
+        exec(f'{val_name} = -{val_name}')
+        yield eval(val_name)
+
+
 # Устанавливает курсор по указанным координатам (x, y)
 def goto_xy(pos_x=None, pos_y=None):
     class COORD(ctypes.Structure):
