@@ -80,7 +80,6 @@ def is_winnings(board_st):
     cycle = 1, 2
 
     # Проверяем наличие выигрышных фрагментов на горизонталях и вертикалях
-    # for board, numb, _ in multi_for((1, 2), (1, 2), (None, None)):
     for board, numb, _ in multi_for(cycle, cycle, (None, None)):
         stat = (board_st, trans_ll(board_st))[board-1]
         cod_win = get_cod(stat, numb)
